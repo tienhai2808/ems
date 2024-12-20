@@ -1,0 +1,63 @@
+{% extends '../layouts/base.html' %}
+
+{% block main %}
+<br>
+<h1 style="text-align: center; font-size: 2.5rem; font-weight: bold; color: #D35400;">Danh Sách Góp Ý</h1>
+<div class="container" style="display:flex; justify-content:center">
+  <div style="width: 80%; background-color: #FFF3E0; border: 1px solid #E67E22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+
+    <!-- Form đóng góp ý kiến -->
+    <div class="mt-2 div-form {{ form_display|default:'d-none' }}" id="form-container">
+      <div class="d-flex" style="justify-content: space-between; align-items: center;">
+        <h5 style="color: #D35400; font-size: 1.25rem;">Gửi ý kiến của bạn</h5>
+        <i style="cursor: pointer; color: #E53935;" class="fa-regular fa-circle-xmark close" id="close-form"></i>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <center>
+          <button class="btn btn-info bg-btn mt-3 text-light pe-5 ps-5 pt-2 pb-2"
+                  style="background-color: #D35400; border: none; border-radius: 8px; font-weight: bold;">
+            Gửi
+          </button>
+        </center>
+      </form>
+    </div>
+
+    <!-- Nút mở form -->
+    <center>
+      <button id="open-form" class="btn btn-info bg-btn btn-letter mt-3 text-light pe-5 ps-5 pt-2 pb-2"
+              style="background-color: #D35400; border: none; border-radius: 8px; font-weight: bold;">
+        Đóng góp ý kiến
+      </button>
+    </center>
+    <br>
+
+    <!-- Danh sách các ý kiến đã gửi -->
+    <div>
+    {% if my_letters %}
+      {% for lt in my_letters %}
+        <h5 class="mt-2" style="font-size:20px; color: #D35400;">
+          {% if lt.is_anonymous %} Gửi ẩn danh {% else %} Gửi công khai {% endif %}: {{ lt.created_at|date:"H:i, d/m/yy" }}
+        </h5>
+        <div class="px-5" style="border-left: 3px solid #D35400; padding-left: 15px; background-color: #FFE0B2; border-radius: 8px; margin-bottom: 10px;">
+          <div style="font-size: 18px; color: #424242;" class="pb-2">- Chủ đề: {{ lt.topic.name }}</div>
+          <div style="font-size: 18px; color: #424242;" class="pb-2">- Trạng thái:
+            <span style="color: {% if lt.status == 'Đang xử lý' %}#E67E22{% else %}#27AE60{% endif %}; font-weight: 700;">
+              {{ lt.status }}
+            </span>
+          </div>
+          <a href="/letters/{{ lt.id }}/" style="text-decoration: none; color: #D35400; font-weight: bold;">- Xem chi tiết</a>
+        </div>
+      {% endfor %}
+    {% else %}
+        <h5 style="font-size:20px; color: #424242;">Bạn chưa đóng góp ý kiến</h5>
+    {% endif %}
+    </div>
+  </div>
+</div>
+<br><br>
+
+{% load static %}
+<script src="{% static 'scripts/letters.js' %}"></script>
+{% endblock %}
